@@ -68,12 +68,17 @@ document.addEventListener('DOMContentLoaded', () => {
         updateDashboardMetrics();
         renderReleases();
         updateTwitterDrawerUI();
+        if (refresh) {
+          showToast(`Feed refreshed: loaded ${allReleases.length} updates.`, 'success');
+        }
       } else {
         showErrorState(data.message || 'Failed to fetch release notes.');
+        showToast(data.message || 'Failed to fetch release notes.', 'error');
       }
     } catch (error) {
       console.error('Error loading releases:', error);
       showErrorState('Failed to connect to backend server.');
+      showToast('Failed to connect to backend server.', 'error');
     } finally {
       setLoading(false);
     }
@@ -104,6 +109,57 @@ document.addEventListener('DOMContentLoaded', () => {
         <button class="btn-primary" style="margin-top: 1rem;" onclick="location.reload()">Retry</button>
       </div>
     `;
+  }
+
+  // 3a. Show a toast notification
+  function showToast(message, type = 'info') {
+    const toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) return;
+    
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    
+    // Select icon SVG based on type
+    let iconSvg = '';
+    if (type === 'success') {
+      iconSvg = `
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2005/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+        </svg>
+      `;
+    } else if (type === 'error') {
+      iconSvg = `
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2005/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+        </svg>
+      `;
+    } else {
+      iconSvg = `
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2005/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      `;
+    }
+    
+    toast.innerHTML = `
+      ${iconSvg}
+      <span>${message}</span>
+    `;
+    
+    toastContainer.appendChild(toast);
+    
+    // Trigger transition
+    setTimeout(() => {
+      toast.classList.add('show');
+    }, 10);
+    
+    // Remove toast after duration
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => {
+        toast.remove();
+      }, 350);
+    }, 3000);
   }
 
   // 4. Update stats cards
@@ -197,8 +253,23 @@ document.addEventListener('DOMContentLoaded', () => {
           </svg>
           <h3>No matching release notes found</h3>
           <p>Try refining your search terms or changing your filters.</p>
+          <button class="btn-primary" id="clear-search-empty-btn" style="margin-top: 1rem;">Clear Search & Filters</button>
         </div>
       `;
+      // Bind click event
+      document.getElementById('clear-search-empty-btn').addEventListener('click', () => {
+        searchInput.value = '';
+        searchQuery = '';
+        currentFilterType = 'all';
+        metricsDashboard.querySelectorAll('.metric-card').forEach(c => {
+          if (c.dataset.type === 'all') {
+            c.classList.add('active');
+          } else {
+            c.classList.remove('active');
+          }
+        });
+        renderReleases();
+      });
       return;
     }
 
@@ -213,6 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
       card.style.setProperty('--card-color', config.color);
       card.style.setProperty('--badge-color-rgb', config.rgb);
       card.dataset.id = rel.id;
+      card.tabIndex = 0; // Accessibility index for keyboard navigation
 
       // Map categories to smaller badges with custom colors
       const categoriesList = rel.categories || [rel.type];
@@ -266,6 +338,17 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleReleaseSelection(rel.id);
       });
 
+      // Keyboard selection (Enter or Space key toggles selection when focused)
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          if (e.target.closest('a') || e.target.closest('.card-tweet-btn') || e.target.closest('.card-copy-btn')) return;
+          if (e.key === ' ') {
+            e.preventDefault(); // Prevent page scrolling
+          }
+          toggleReleaseSelection(rel.id);
+        }
+      });
+
       // Copy to Clipboard logic
       const copyBtn = card.querySelector('.card-copy-btn');
       copyBtn.addEventListener('click', async () => {
@@ -278,12 +361,14 @@ document.addEventListener('DOMContentLoaded', () => {
               <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
             </svg>
           `;
+          showToast('Copied release content to clipboard!', 'success');
           setTimeout(() => {
             copyBtn.classList.remove('success');
             copyBtn.innerHTML = originalSvg;
           }, 1500);
         } catch (err) {
           console.error('Failed to copy text: ', err);
+          showToast('Failed to copy text to clipboard.', 'error');
         }
       });
 
@@ -365,6 +450,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    
+    showToast(`Exported ${selected.length} updates to CSV successfully!`, 'success');
   }
 
   // 8. Generate standard structured Tweet depending on selections
@@ -503,6 +590,21 @@ document.addEventListener('DOMContentLoaded', () => {
     
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
+  });
+
+  // Global keydown shortcut for search focus
+  document.addEventListener('keydown', (e) => {
+    // If user is focused on an input/textarea or has contenteditable, don't hijack '/'
+    const active = document.activeElement;
+    if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) {
+      return;
+    }
+    
+    if (e.key === '/') {
+      e.preventDefault();
+      searchInput.focus();
+      searchInput.select();
+    }
   });
 
   // Init application
