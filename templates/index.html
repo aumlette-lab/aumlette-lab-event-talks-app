@@ -8,91 +8,94 @@
 </head>
 <body>
   <div class="container">
-    <!-- Header -->
-    <header>
-      <div class="theme-toggle-wrapper">
-        <button id="theme-toggle" class="theme-toggle-btn" title="Toggle color scheme">
-          <!-- Sun Icon (shows in dark mode) -->
-          <svg class="sun-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    <!-- Sticky Header Area (includes Header, Metrics Dashboard, and Search/Controls Bar) -->
+    <div class="sticky-header-container">
+      <!-- Header -->
+      <header>
+        <div class="theme-toggle-wrapper">
+          <button id="theme-toggle" class="theme-toggle-btn" title="Toggle color scheme">
+            <!-- Sun Icon (shows in dark mode) -->
+            <svg class="sun-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <!-- Moon Icon (shows in light mode) -->
+            <svg class="moon-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </button>
+        </div>
+        <div class="logo-container">
+          <svg class="logo-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2005/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
           </svg>
-          <!-- Moon Icon (shows in light mode) -->
-          <svg class="moon-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-          </svg>
-        </button>
-      </div>
-      <div class="logo-container">
-        <svg class="logo-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2005/svg">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-        </svg>
-        <h1>BigQuery Release Pulse</h1>
-      </div>
-      <p class="subtitle">Stay up-to-date with Google BigQuery changes, features, and announcements. Select updates to compile and post a tweet directly to X.</p>
-    </header>
+          <h1>BigQuery Release Pulse</h1>
+        </div>
+        <p class="subtitle">Stay up-to-date with Google BigQuery changes, features, and announcements. Select updates to compile and post a tweet directly to X.</p>
+      </header>
 
-    <!-- Metrics Dashboard -->
-    <section class="dashboard-grid" id="metrics-dashboard">
-      <div class="metric-card active" data-type="all" style="--card-accent: #a5b4fc;">
-        <div class="metric-num" id="count-all">-</div>
-        <div class="metric-label">All Updates</div>
-      </div>
-      <div class="metric-card" data-type="Feature" style="--card-accent: var(--color-feature);">
-        <div class="metric-num" id="count-feature">-</div>
-        <div class="metric-label">Features</div>
-      </div>
-      <div class="metric-card" data-type="Announcement" style="--card-accent: var(--color-announcement);">
-        <div class="metric-num" id="count-announcement">-</div>
-        <div class="metric-label">Announcements</div>
-      </div>
-      <div class="metric-card" data-type="Change" style="--card-accent: var(--color-change);">
-        <div class="metric-num" id="count-change">-</div>
-        <div class="metric-label">Changes</div>
-      </div>
-      <div class="metric-card" data-type="Breaking" style="--card-accent: var(--color-breaking);">
-        <div class="metric-num" id="count-breaking">-</div>
-        <div class="metric-label">Breaking</div>
-      </div>
-      <div class="metric-card" data-type="Issue" style="--card-accent: var(--color-issue);">
-        <div class="metric-num" id="count-issue">-</div>
-        <div class="metric-label">Issues</div>
-      </div>
-    </section>
+      <!-- Metrics Dashboard -->
+      <section class="dashboard-grid" id="metrics-dashboard">
+        <div class="metric-card active" data-type="all" style="--card-accent: #a5b4fc;">
+          <div class="metric-num" id="count-all">-</div>
+          <div class="metric-label">All Updates</div>
+        </div>
+        <div class="metric-card" data-type="Feature" style="--card-accent: var(--color-feature);">
+          <div class="metric-num" id="count-feature">-</div>
+          <div class="metric-label">Features</div>
+        </div>
+        <div class="metric-card" data-type="Announcement" style="--card-accent: var(--color-announcement);">
+          <div class="metric-num" id="count-announcement">-</div>
+          <div class="metric-label">Announcements</div>
+        </div>
+        <div class="metric-card" data-type="Change" style="--card-accent: var(--color-change);">
+          <div class="metric-num" id="count-change">-</div>
+          <div class="metric-label">Changes</div>
+        </div>
+        <div class="metric-card" data-type="Breaking" style="--card-accent: var(--color-breaking);">
+          <div class="metric-num" id="count-breaking">-</div>
+          <div class="metric-label">Breaking</div>
+        </div>
+        <div class="metric-card" data-type="Issue" style="--card-accent: var(--color-issue);">
+          <div class="metric-num" id="count-issue">-</div>
+          <div class="metric-label">Issues</div>
+        </div>
+      </section>
 
-    <!-- Controls -->
-    <section class="controls-bar">
-      <div class="search-wrapper">
-        <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2005/svg">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-        </svg>
-        <input type="text" id="search-input" class="search-input" placeholder="Search updates (e.g. Gemini, CDC, API)...">
-      </div>
-      
-      <div class="action-buttons">
-        <button id="refresh-btn" class="btn-primary">
-          <svg id="refresh-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="23 4 23 10 17 10"></polyline>
-            <polyline points="1 20 1 14 7 14"></polyline>
-            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+      <!-- Controls -->
+      <section class="controls-bar">
+        <div class="search-wrapper">
+          <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2005/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
           </svg>
-          <span>Refresh Feed</span>
-        </button>
-        <button id="tweet-trigger" class="btn-secondary" disabled>
-          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2005/svg">
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
-          </svg>
-          <span>Compose Tweet</span>
-        </button>
-      </div>
-    </section>
+          <input type="text" id="search-input" class="search-input" placeholder="Search updates (e.g. Gemini, CDC, API)...">
+        </div>
+        
+        <div class="action-buttons">
+          <button id="refresh-btn" class="btn-primary">
+            <svg id="refresh-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 4 23 10 17 10"></polyline>
+              <polyline points="1 20 1 14 7 14"></polyline>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+            <span>Refresh Feed</span>
+          </button>
+          <button id="tweet-trigger" class="btn-secondary" disabled>
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2005/svg">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+            </svg>
+            <span>Compose Tweet</span>
+          </button>
+        </div>
+      </section>
+    </div>
 
     <!-- Releases Content Grid -->
     <main class="releases-grid" id="releases-container">
