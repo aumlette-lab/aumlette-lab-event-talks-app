@@ -28,6 +28,70 @@
   --transition-bounce: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+:root[data-theme="light"] {
+  --bg-gradient-start: #f8fafc;
+  --bg-gradient-end: #e2e8f0;
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(15, 23, 42, 0.08);
+  --glass-border-hover: rgba(15, 23, 42, 0.18);
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  
+  --color-feature: hsl(150, 84%, 30%);
+  --color-announcement: hsl(210, 95%, 45%);
+  --color-issue: hsl(0, 84%, 45%);
+  --color-breaking: hsl(28, 95%, 40%);
+  --color-change: hsl(270, 80%, 45%);
+  --color-update: hsl(180, 80%, 35%);
+  
+  --shadow-sm: 0 2px 8px -2px rgba(15, 23, 42, 0.1);
+  --shadow-md: 0 12px 20px -8px rgba(15, 23, 42, 0.12);
+  --shadow-lg: 0 20px 40px -15px rgba(15, 23, 42, 0.15);
+}
+
+:root[data-theme="light"] body {
+  background: radial-gradient(circle at 50% 0%, #cbd5e1 0%, var(--bg-gradient-start) 50%, var(--bg-gradient-end) 100%);
+}
+
+:root[data-theme="light"] .search-input {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+:root[data-theme="light"] .card-content code {
+  background: rgba(15, 23, 42, 0.06);
+  color: #be123c;
+}
+
+:root[data-theme="light"] .action-bar {
+  background: rgba(15, 19, 29, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="light"] .action-bar-text {
+  color: #f3f4f6;
+}
+
+:root[data-theme="light"] .action-bar-divider {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+:root[data-theme="light"] .btn-secondary-sm {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f3f4f6;
+}
+
+:root[data-theme="light"] .btn-secondary-sm:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+:root[data-theme="light"] .action-bar-btn-clear {
+  color: #9ca3af;
+}
+
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -70,6 +134,50 @@ header {
   margin-bottom: 3rem;
   text-align: center;
   position: relative;
+}
+
+.theme-toggle-wrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.theme-toggle-btn {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-bounce);
+  box-shadow: var(--shadow-sm);
+}
+
+.theme-toggle-btn:hover {
+  transform: scale(1.1);
+  border-color: var(--glass-border-hover);
+  color: var(--color-announcement);
+  box-shadow: var(--shadow-md);
+}
+
+.theme-toggle-btn .moon-icon {
+  display: none;
+}
+
+.theme-toggle-btn .sun-icon {
+  display: block;
+}
+
+:root[data-theme="light"] .theme-toggle-btn .sun-icon {
+  display: none;
+}
+
+:root[data-theme="light"] .theme-toggle-btn .moon-icon {
+  display: block;
 }
 
 .logo-container {
