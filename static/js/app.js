@@ -23,8 +23,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const progressCircle = document.getElementById('progress-circle');
   const progressCirclePath = document.getElementById('progress-bar-circle');
   
-  const tweetFab = document.getElementById('tweet-fab');
-  const fabBadge = document.getElementById('fab-badge');
+  const actionBar = document.getElementById('action-bar');
+  const actionBarBadge = document.getElementById('action-bar-badge');
+  const actionBarCsvBtn = document.getElementById('action-bar-csv-btn');
+  const actionBarTweetBtn = document.getElementById('action-bar-tweet-btn');
+  const actionBarClearBtn = document.getElementById('action-bar-clear-btn');
 
   // Badge configuration maps
   const badgeConfig = {
@@ -190,19 +193,48 @@ document.addEventListener('DOMContentLoaded', () => {
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
             </svg>
           </a>
-          <button class="card-tweet-btn" title="Tweet about this specific release">
-            <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2005/svg">
-              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
-            </svg>
-          </button>
+          <div class="card-actions-wrapper">
+            <button class="card-copy-btn" title="Copy release content to clipboard">
+              <svg class="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+            </button>
+            <button class="card-tweet-btn" title="Tweet about this specific release">
+              <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2005/svg">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+              </svg>
+            </button>
+          </div>
         </div>
       `;
 
       
       // Select logic when clicking card (avoid triggers on links and buttons)
       card.addEventListener('click', (e) => {
-        if (e.target.closest('a') || e.target.closest('.card-tweet-btn')) return;
+        if (e.target.closest('a') || e.target.closest('.card-tweet-btn') || e.target.closest('.card-copy-btn')) return;
         toggleReleaseSelection(rel.id);
+      });
+
+      // Copy to Clipboard logic
+      const copyBtn = card.querySelector('.card-copy-btn');
+      copyBtn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(rel.content_text);
+          copyBtn.classList.add('success');
+          const originalSvg = copyBtn.innerHTML;
+          copyBtn.innerHTML = `
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2005/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+            </svg>
+          `;
+          setTimeout(() => {
+            copyBtn.classList.remove('success');
+            copyBtn.innerHTML = originalSvg;
+          }, 1500);
+        } catch (err) {
+          console.error('Failed to copy text: ', err);
+        }
       });
 
       // Direct Tweet button logic
@@ -239,17 +271,50 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateTwitterDrawerUI() {
     const count = selectedReleases.size;
     selectedCount.textContent = count;
-    fabBadge.textContent = count;
+    
+    // Update bottom action bar badge
+    actionBarBadge.textContent = count;
     
     if (count > 0) {
       tweetTrigger.disabled = false;
-      tweetFab.classList.add('visible');
+      actionBar.classList.add('visible');
     } else {
       tweetTrigger.disabled = true;
-      tweetFab.classList.remove('visible');
+      actionBar.classList.remove('visible');
     }
     
     generateDraftTweet();
+  }
+
+  // 7a. CSV Export logic
+  function exportSelectedToCSV() {
+    if (selectedReleases.size === 0) return;
+    
+    const selected = allReleases.filter(r => selectedReleases.has(r.id));
+    
+    // Header row
+    let csvContent = "Date,Type,Categories,Docs Link,Content Text\n";
+    
+    selected.forEach(rel => {
+      const date = `"${rel.date.replace(/"/g, '""')}"`;
+      const type = `"${rel.type.replace(/"/g, '""')}"`;
+      const categories = `"${rel.categories.join('; ').replace(/"/g, '""')}"`;
+      const link = `"${rel.link.replace(/"/g, '""')}"`;
+      const cleanText = rel.content_text.replace(/\r?\n|\r/g, " ");
+      const text = `"${cleanText.replace(/"/g, '""')}"`;
+      
+      csvContent += `${date},${type},${categories},${link},${text}\n`;
+    });
+    
+    // Download trigger
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `bigquery_releases_export_${new Date().toISOString().slice(0,10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 
   // 8. Generate standard structured Tweet depending on selections
@@ -352,15 +417,19 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   tweetTrigger.addEventListener('click', openDrawer);
-  tweetFab.addEventListener('click', openDrawer);
+  actionBarTweetBtn.addEventListener('click', openDrawer);
   closeDrawer.addEventListener('click', closeDrawerFunc);
   drawerBackdrop.addEventListener('click', closeDrawerFunc);
 
-  clearSelectionBtn.addEventListener('click', () => {
+  const clearSelections = () => {
     selectedReleases.clear();
     container.querySelectorAll('.release-card').forEach(c => c.classList.remove('selected'));
     updateTwitterDrawerUI();
-  });
+  };
+
+  clearSelectionBtn.addEventListener('click', clearSelections);
+  actionBarClearBtn.addEventListener('click', clearSelections);
+  actionBarCsvBtn.addEventListener('click', exportSelectedToCSV);
 
   tweetTextarea.addEventListener('input', updateCharCounter);
 

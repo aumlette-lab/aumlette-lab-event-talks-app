@@ -752,51 +752,170 @@ h1 {
   opacity: 0.6;
 }
 
-/* Floating Action Button (FAB) for Tweet when drawer is closed but items are selected */
-.tweet-fab {
+.card-actions-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.card-copy-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-smooth);
+}
+
+.card-copy-btn:hover {
+  color: var(--color-feature);
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.card-copy-btn.success {
+  color: var(--color-feature);
+  animation: pulse-green 1s ease;
+}
+
+@keyframes pulse-green {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Floating Action Bar at bottom of screen */
+.action-bar {
   position: fixed;
   bottom: 2rem;
-  right: 2rem;
-  background: #1d9bf0;
-  color: white;
-  border: none;
-  border-radius: 50px;
-  padding: 1rem 1.75rem;
-  font-family: 'Outfit', sans-serif;
-  font-weight: 700;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  opacity: 0;
+  background: rgba(15, 19, 29, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 40px;
+  padding: 0.5rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 90;
+  box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 255, 255, 0.02);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.action-bar.visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.action-bar-info {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  box-shadow: var(--shadow-lg), 0 0 20px rgba(29, 155, 240, 0.4);
-  cursor: pointer;
-  z-index: 90;
-  transform: translateY(100px);
-  opacity: 0;
-  transition: var(--transition-bounce);
+  padding-left: 0.5rem;
 }
 
-.tweet-fab.visible {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-.tweet-fab:hover {
-  background: #1a8cd8;
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg), 0 0 25px rgba(29, 155, 240, 0.5);
-}
-
-.fab-badge {
-  background: white;
-  color: #1d9bf0;
-  width: 20px;
-  height: 20px;
+.action-bar-badge {
+  background: var(--color-announcement);
+  color: white;
+  min-width: 22px;
+  height: 22px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.75rem;
   font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+}
+
+.action-bar-text {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.action-bar-divider {
+  width: 1px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.action-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Smaller version of buttons inside the action bar */
+.btn-primary-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: linear-gradient(135deg, hsl(210, 100%, 55%), hsl(220, 90%, 45%));
+  color: white;
+  border: none;
+  padding: 0.4rem 1rem;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.82rem;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.25);
+  transition: var(--transition-bounce);
+}
+
+.btn-primary-sm:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 5px 12px rgba(37, 99, 235, 0.35);
+}
+
+.btn-secondary-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  padding: 0.4rem 1rem;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 500;
+  font-size: 0.82rem;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.btn-secondary-sm:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--glass-border-hover);
+}
+
+.action-bar-btn-clear {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-smooth);
+}
+
+.action-bar-btn-clear:hover {
+  color: var(--color-issue);
+  background: rgba(239, 68, 68, 0.1);
 }
 
 /* Backdrop for Mobile overlay */

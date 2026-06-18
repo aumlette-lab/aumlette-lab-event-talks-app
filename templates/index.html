@@ -132,14 +132,33 @@
     </button>
   </aside>
 
-  <!-- Floating Action Button for Twitter -->
-  <button class="tweet-fab" id="tweet-fab">
-    <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2005/svg">
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
-    </svg>
-    <span>Tweet</span>
-    <span class="fab-badge" id="fab-badge">0</span>
-  </button>
+  <!-- Floating Action Bar at bottom of screen -->
+  <div class="action-bar" id="action-bar">
+    <div class="action-bar-info">
+      <span class="action-bar-badge" id="action-bar-badge">0</span>
+      <span class="action-bar-text">updates selected</span>
+    </div>
+    <div class="action-bar-divider"></div>
+    <div class="action-bar-actions">
+      <button class="action-bar-btn btn-secondary-sm" id="action-bar-csv-btn" title="Export selected updates to CSV">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2005/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+        </svg>
+        <span>Export CSV</span>
+      </button>
+      <button class="action-bar-btn btn-primary-sm" id="action-bar-tweet-btn" title="Tweet selected updates">
+        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2005/svg">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+        </svg>
+        <span>Tweet</span>
+      </button>
+      <button class="action-bar-btn-clear" id="action-bar-clear-btn" title="Clear selection">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2005/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
 
   <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
