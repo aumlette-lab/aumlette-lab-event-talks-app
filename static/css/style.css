@@ -1085,3 +1085,16 @@ h1 {
     font-size: 2rem;
   }
 }
+
+/* Search Highlight styling */
+.search-highlight {
+  background: rgba(234, 179, 8, 0.3); /* Translucent amber yellow */
+  color: inherit;
+  padding: 0.05rem 0.2rem;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+:root[data-theme="light"] .search-highlight {
+  background: rgba(234, 179, 8, 0.45);
+}

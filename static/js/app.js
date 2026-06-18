@@ -128,6 +128,56 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('count-issue').textContent = counts.Issue;
   }
 
+  // 4a. Highlight matching query text inside HTML safely (traversing text nodes)
+  function highlightHTML(html, query) {
+    if (!query) return html;
+    
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    
+    const walk = (node) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const text = node.nodeValue;
+        const lowerText = text.toLowerCase();
+        const lowerQuery = query.toLowerCase();
+        
+        if (lowerText.includes(lowerQuery)) {
+          const fragment = document.createDocumentFragment();
+          let lastIndex = 0;
+          let index = lowerText.indexOf(lowerQuery);
+          
+          while (index !== -1) {
+            // Append preceding text
+            if (index > lastIndex) {
+              fragment.appendChild(document.createTextNode(text.substring(lastIndex, index)));
+            }
+            
+            // Append highlighted element
+            const mark = document.createElement('mark');
+            mark.className = 'search-highlight';
+            mark.textContent = text.substring(index, index + query.length);
+            fragment.appendChild(mark);
+            
+            lastIndex = index + query.length;
+            index = lowerText.indexOf(lowerQuery, lastIndex);
+          }
+          
+          if (lastIndex < text.length) {
+            fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
+          }
+          
+          node.parentNode.replaceChild(fragment, node);
+        }
+      } else if (node.nodeType === Node.ELEMENT_NODE && node.nodeName !== 'MARK' && node.nodeName !== 'A') {
+        // Recursively traverse children, but skip anchors to avoid breaking URLs
+        Array.from(node.childNodes).forEach(walk);
+      }
+    };
+    
+    Array.from(tempDiv.childNodes).forEach(walk);
+    return tempDiv.innerHTML;
+  }
+
   // 5. Render Release Notes based on active search and type filters
   function renderReleases() {
     const filtered = allReleases.filter(rel => {
@@ -184,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
           ${badgesHtml}
         </div>
         <div class="card-content">
-          ${rel.content_html}
+          ${highlightHTML(rel.content_html, searchQuery)}
         </div>
         <div class="card-footer">
           <a href="${rel.link}" target="_blank" class="view-original-link">
