@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BigQuery Release Pulse</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="logo-container">
+        <svg class="logo-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2005/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+        </svg>
+        <h1>BigQuery Release Pulse</h1>
+      </div>
+      <p class="subtitle">Stay up-to-date with Google BigQuery changes, features, and announcements. Select updates to compile and post a tweet directly to X.</p>
+    </header>
+
+    <!-- Metrics Dashboard -->
+    <section class="dashboard-grid" id="metrics-dashboard">
+      <div class="metric-card active" data-type="all" style="--card-accent: #a5b4fc;">
+        <div class="metric-num" id="count-all">-</div>
+        <div class="metric-label">All Updates</div>
+      </div>
+      <div class="metric-card" data-type="Feature" style="--card-accent: var(--color-feature);">
+        <div class="metric-num" id="count-feature">-</div>
+        <div class="metric-label">Features</div>
+      </div>
+      <div class="metric-card" data-type="Announcement" style="--card-accent: var(--color-announcement);">
+        <div class="metric-num" id="count-announcement">-</div>
+        <div class="metric-label">Announcements</div>
+      </div>
+      <div class="metric-card" data-type="Change" style="--card-accent: var(--color-change);">
+        <div class="metric-num" id="count-change">-</div>
+        <div class="metric-label">Changes</div>
+      </div>
+      <div class="metric-card" data-type="Breaking" style="--card-accent: var(--color-breaking);">
+        <div class="metric-num" id="count-breaking">-</div>
+        <div class="metric-label">Breaking</div>
+      </div>
+      <div class="metric-card" data-type="Issue" style="--card-accent: var(--color-issue);">
+        <div class="metric-num" id="count-issue">-</div>
+        <div class="metric-label">Issues</div>
+      </div>
+    </section>
+
+    <!-- Controls -->
+    <section class="controls-bar">
+      <div class="search-wrapper">
+        <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2005/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <input type="text" id="search-input" class="search-input" placeholder="Search updates (e.g. Gemini, CDC, API)...">
+      </div>
+      
+      <div class="action-buttons">
+        <button id="refresh-btn" class="btn-primary">
+          <svg id="refresh-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+          <span>Refresh Feed</span>
+        </button>
+        <button id="tweet-trigger" class="btn-secondary" disabled>
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2005/svg">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+          </svg>
+          <span>Compose Tweet</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Releases Content Grid -->
+    <main class="releases-grid" id="releases-container">
+      <!-- Cards will be dynamically rendered here -->
+      <div class="empty-state">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2005/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+        </svg>
+        <h3>No release notes loaded</h3>
+        <p>Loading details from BigQuery Feed, please wait...</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- Twitter Compose Drawer -->
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <aside class="tweet-drawer" id="tweet-drawer">
+    <div class="drawer-header">
+      <div class="drawer-title">
+        <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2005/svg">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+        </svg>
+        <span>Compose Tweet</span>
+      </div>
+      <button class="close-btn" id="close-drawer">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2005/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div class="selected-count-badge">
+      <span>Selected: <strong id="selected-count">0</strong> updates</span>
+      <button class="clear-selection" id="clear-selection-btn">Clear all</button>
+    </div>
+
+    <div class="tweet-editor-wrapper">
+      <textarea id="tweet-textarea" class="tweet-textarea" placeholder="What's happening in BigQuery? Select updates from the feed or write here..."></textarea>
+      
+      <div class="tweet-info-bar">
+        <div class="char-counter-wrapper">
+          <svg class="progress-circle" id="progress-circle">
+            <circle class="bg" cx="12" cy="12" r="10"></circle>
+            <circle class="progress" cx="12" cy="12" r="10" id="progress-bar-circle"></circle>
+          </svg>
+          <span id="char-counter" class="char-count-text">280</span>
+        </div>
+        <span>Max 280 chars recommended</span>
+      </div>
+    </div>
+
+    <button id="post-tweet-btn" class="btn-tweet" disabled>
+      <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2005/svg">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+      </svg>
+      <span>Post on X / Twitter</span>
+    </button>
+  </aside>
+
+  <!-- Floating Action Button for Twitter -->
+  <button class="tweet-fab" id="tweet-fab">
+    <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2005/svg">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+    </svg>
+    <span>Tweet</span>
+    <span class="fab-badge" id="fab-badge">0</span>
+  </button>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
